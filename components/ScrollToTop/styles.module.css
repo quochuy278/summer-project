@@ -1,0 +1,16 @@
+.button {
+    position: fixed !important;
+    bottom: 20px;
+    right: 20px;
+    font-size: 100px;
+    color: white;
+    cursor: pointer;
+    border-radius: 100px;
+    border: none;
+    background: #d29681 !important;
+    box-shadow: none !important;
+  }
+  
+  .button:hover {
+    background: orange;
+  }
