@@ -12,10 +12,6 @@ const UserDropdownMenuItem = () => {
       title: "Dashboard",
       path: "/users/dashboard",
     },
-    {
-      title: "Logout",
-      path: "#",
-    },
   ];
 };
 
