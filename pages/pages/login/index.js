@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useRef } from "react";
 import ProjectCard from "../../../components/layout/Card";
 // ** Next Imports
 import Link from "next/link";
@@ -20,7 +20,7 @@ import { styled, useTheme } from "@mui/material/styles";
 import MuiCard from "@mui/material/Card";
 import InputAdornment from "@mui/material/InputAdornment";
 import MuiFormControlLabel from "@mui/material/FormControlLabel";
-
+import { signIn } from "next-auth/client";
 // ** Icons Imports
 
 import EyeOutline from "mdi-material-ui/EyeOutline";
@@ -48,20 +48,37 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 const LoginPage = () => {
   // ** State
   const [values, setValues] = useState({
-    password: "",
     showPassword: false,
   });
 
   // ** Hook
   const theme = useTheme();
   const router = useRouter();
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
 
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
+
+ 
+  const loginHandler =async (event) => {
+    event.preventDefault()
+      const enteredEmail = emailInputRef.current.value;
+      const enteredPassword = passwordInputRef.current.value;
+ 
+     console.log(enteredEmail, enteredPassword);
+       const result = await signIn("credentials", {
+         redirect: false,
+         email: enteredEmail,
+         password: enteredPassword,
+       });
+     
+       // console.log(result);
+       if (!result.error) {
+         router.replace("/");
+       }
+  }
 
   const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
+    setValues({ showPassword: !values.showPassword });
   };
 
   const handleMouseDownPassword = (event) => {
@@ -180,6 +197,7 @@ const LoginPage = () => {
                 id="email"
                 label="Email"
                 sx={{ marginBottom: 4 }}
+                inputRef={emailInputRef}
               />
               <FormControl fullWidth>
                 <InputLabel htmlFor="auth-login-password">Password</InputLabel>
@@ -187,7 +205,7 @@ const LoginPage = () => {
                   label="Password"
                   value={values.password}
                   id="auth-login-password"
-                  onChange={handleChange("password")}
+                  inputRef={passwordInputRef}
                   type={values.showPassword ? "text" : "password"}
                   endAdornment={
                     <InputAdornment position="end">
@@ -228,7 +246,7 @@ const LoginPage = () => {
                 size="large"
                 variant="contained"
                 sx={{ marginBottom: 7 }}
-                onClick={() => router.push("/")}
+                onClick={loginHandler}
               >
                 Login
               </Button>

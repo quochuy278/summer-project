@@ -13,13 +13,9 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useTheme } from "@mui/material/styles";
-
+import { signOut, useSession } from "next-auth/client";
 import MainNavigation from "../navigation/main-navigation";
 import UserDropdownMenuItem from "../navigation/user-dropdown-menu";
-
-
-const pages = ["All Courses", "My Course"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 const Header = () => {
   const [anchorElNav, setAnchorElNav] = useState(null)
@@ -43,7 +39,9 @@ const Header = () => {
   };
   const navigationItems = MainNavigation();  //Nav items
   const userDropdownItems = UserDropdownMenuItem() //Dropdown items
- 
+  const logoutHandler = () => {
+    signOut();
+  };
   return (
     <AppBar position="static">
       <Container maxWidth="x1">
@@ -168,6 +166,9 @@ const Header = () => {
                   </Link>
                 </MenuItem>
               ))}
+              <MenuItem onClick={logoutHandler}>
+                  <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>

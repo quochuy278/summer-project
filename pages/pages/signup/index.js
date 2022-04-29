@@ -1,9 +1,9 @@
 // ** React Imports
-import { useState, Fragment } from "react";
+import { useState, useRef } from "react";
 import ProjectCard from "../../../components/layout/Card";
 // ** Next Imports
 import Link from "next/link";
-
+import { useRouter } from "next/router";
 // ** MUI Components
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -19,15 +19,15 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import { styled, useTheme } from "@mui/material/styles";
 import MuiCard from "@mui/material/Card";
 import InputAdornment from "@mui/material/InputAdornment";
-import MuiFormControlLabel from "@mui/material/FormControlLabel";
+
 
 // ** Icons Imports
 
 import EyeOutline from "mdi-material-ui/EyeOutline";
 import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
 
-// ** Configs
-
+// ** Packages
+import axios from "axios";
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -40,37 +40,60 @@ const LinkStyled = styled("a")(({ theme }) => ({
   color: theme.palette.primary.main,
 }));
 
-const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
-  marginTop: theme.spacing(1.5),
-  marginBottom: theme.spacing(4),
-  "& .MuiFormControlLabel-label": {
-    fontSize: "0.875rem",
-    color: theme.palette.text.secondary,
-  },
-}));
-
 const RegisterPage = () => {
   // ** States
   const [values, setValues] = useState({
-    password: "",
     showPassword: false,
   });
+  const usernameInputRef = useRef();
+  const emailInputRef = useRef();
+  const passwordInputRef = useRef();
+  const router = useRouter();
 
   // ** Hook
   const theme = useTheme();
 
-  const handleChange = (prop) => (event) => {
-    setValues({ ...values, [prop]: event.target.value });
-  };
-
   const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword });
+    setValues({ showPassword: !values.showPassword });
   };
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
+  const signupHandler = () => {
+    const enteredUsername = usernameInputRef.current.value;
+     const enteredEmail = emailInputRef.current.value;
+      const enteredPassword = passwordInputRef.current.value;
+      console.log(enteredUsername , enteredEmail , enteredPassword)
+        axios({
+          method: "post",
+          url: `${process.env.url}api/auth/signup`,
+          data: {
+            username: enteredUsername,
+            email: enteredEmail,
+            password: enteredPassword,
+            isTeacher: false
+          },
+        })
+          .then((res) => {
+            console.log(res.data);
+            // console.log(message)
+            const { message } = res.data;
 
+            if (message == "Created user!") {
+             
+              router.replace("/pages/login");
+            }
+            // } else {
+            //   setStatus("error");
+            //   setError(message);
+            //   setLoading(false);
+            // }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+  };
   return (
     <ProjectCard>
       <Box className="content-center">
@@ -183,12 +206,14 @@ const RegisterPage = () => {
                 id="username"
                 label="Username"
                 sx={{ marginBottom: 4 }}
+                inputRef={usernameInputRef}
               />
               <TextField
                 fullWidth
                 type="email"
                 label="Email"
                 sx={{ marginBottom: 4 }}
+                inputRef={emailInputRef}
               />
               <FormControl fullWidth>
                 <InputLabel htmlFor="auth-register-password">
@@ -196,9 +221,8 @@ const RegisterPage = () => {
                 </InputLabel>
                 <OutlinedInput
                   label="Password"
-                  value={values.password}
+                 inputRef={passwordInputRef}
                   id="auth-register-password"
-                  onChange={handleChange("password")}
                   type={values.showPassword ? "text" : "password"}
                   endAdornment={
                     <InputAdornment position="end">
@@ -218,25 +242,14 @@ const RegisterPage = () => {
                   }
                 />
               </FormControl>
-              <FormControlLabel
-                control={<Checkbox />}
-                label={
-                  <Fragment>
-                    <span>I agree to </span>
-                    <Link href="/" passHref>
-                      <LinkStyled onClick={(e) => e.preventDefault()}>
-                        privacy policy & terms
-                      </LinkStyled>
-                    </Link>
-                  </Fragment>
-                }
-              />
+
               <Button
                 fullWidth
                 size="large"
                 type="submit"
                 variant="contained"
-                sx={{ marginBottom: 7 }}
+                sx={{ my: 4 }}
+                onClick={signupHandler}
               >
                 Sign up
               </Button>
@@ -257,7 +270,6 @@ const RegisterPage = () => {
                   </Link>
                 </Typography>
               </Box>
-             
             </form>
           </CardContent>
         </Card>
@@ -265,6 +277,5 @@ const RegisterPage = () => {
     </ProjectCard>
   );
 };
-
 
 export default RegisterPage;
