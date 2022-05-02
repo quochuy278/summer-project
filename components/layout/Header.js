@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Link from 'next/link'
+import Link from "next/link";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -13,16 +13,18 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useTheme } from "@mui/material/styles";
-import { signOut, useSession } from "next-auth/client";
+import { signOut, useSession } from "next-auth/react";
 import MainNavigation from "../navigation/main-navigation";
 import UserDropdownMenuItem from "../navigation/user-dropdown-menu";
+import LoadingSpinner from "../ui/loading-spinner";
 
 const Header = () => {
-  const [anchorElNav, setAnchorElNav] = useState(null)
-   
   const [anchorElUser, setAnchorElUser] = useState(null);
 
-  const theme = useTheme()
+  const { status } = useSession();
+  const theme = useTheme();
+
+  console.log(status);
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -37,11 +39,14 @@ const Header = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-  const navigationItems = MainNavigation();  //Nav items
-  const userDropdownItems = UserDropdownMenuItem() //Dropdown items
+  const navigationItems = MainNavigation(); //Nav items
+  const userDropdownItems = UserDropdownMenuItem(); //Dropdown items
   const logoutHandler = () => {
     signOut();
   };
+  if (status == "loading") {
+    return <LoadingSpinner />;
+  }
   return (
     <AppBar position="static">
       <Container maxWidth="x1">
@@ -138,38 +143,55 @@ const Header = () => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {userDropdownItems.map((item) => (
-                <MenuItem key={item.index} onClick={handleCloseUserMenu}>
-                  <Link href={item.path}>
-                    <Typography textAlign="center">{item.title}</Typography>
-                  </Link>
-                </MenuItem>
-              ))}
-              <MenuItem onClick={logoutHandler}>
-                  <Typography textAlign="center">Logout</Typography>
-              </MenuItem>
-            </Menu>
+            {status === "authenticated" && (
+              <Box>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar
+                      alt="Remy Sharp"
+                      src="/static/images/avatar/2.jpg"
+                    />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {userDropdownItems.map((item) => (
+                    <MenuItem key={item.index} onClick={handleCloseUserMenu}>
+                      <Link href={item.path}>
+                        <Typography textAlign="center">{item.title}</Typography>
+                      </Link>
+                    </MenuItem>
+                  ))}
+                  <MenuItem onClick={logoutHandler}>
+                    <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
+                </Menu>
+              </Box>
+            )}
+            {status === "unauthenticated" && (
+              <Box>
+                <Button variant="outline">
+                  <Link href={"/pages/login"}>Login</Link>
+                </Button>
+                <Button variant="outline">
+                  <Link href={"/pages/signup"}>signup</Link>
+                </Button>
+              </Box>
+            )}
           </Box>
         </Toolbar>
       </Container>
