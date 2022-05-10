@@ -1,7 +1,7 @@
-const TeacherSignupPage = () => {
-    return (
-        <p>TeacherSignupPage</p>
-    )
-}
+import TeacherForm from "../../../../components/signup/teacher/teacherform";
 
-export default TeacherSignupPage
+const handler = () => {
+  return <TeacherForm />;
+};
+
+export default handler;
