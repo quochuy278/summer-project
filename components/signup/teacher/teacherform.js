@@ -13,8 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import CardContent from "@mui/material/CardContent";
 import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import { styled, useTheme } from "@mui/material/styles";
-import MuiCard from "@mui/material/Card";
+import { useTheme } from "@mui/material/styles";
 import InputAdornment from "@mui/material/InputAdornment";
 // ** Icons Imports
 import EyeOutline from "mdi-material-ui/EyeOutline";
@@ -25,8 +24,9 @@ import LoadingSpinner from "../../../components/ui/loading-spinner";
 import ProjectCard from "../../../components/layout/Card";
 import Icon from "../../../components/icon";
 import { Chip, MenuItem, Select } from "@mui/material";
-
-const names = [
+import Error from "../../ui/error";
+import { Card, LinkStyled, MenuProps } from "../../ui/customComponents";
+const experiences = [
   "Math",
   "Chemistry",
   "History",
@@ -39,32 +39,14 @@ const names = [
   "Kelly Snyder",
 ];
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
+const departments = ["Engineeer", "Dancer", "Mathematics", "Researcher"];
 
 // ** Styled Components
-const Card = styled(MuiCard)(({ theme }) => ({
-  [theme.breakpoints.up("sm")]: { width: "30rem" },
-}));
 
-const LinkStyled = styled("a")(({ theme }) => ({
-  fontSize: "0.875rem",
-  textDecoration: "none",
-  color: theme.palette.primary.main,
-}));
-
-const getStyles = (name, personName, theme) => {
+const getStyles = (experience, selectedExperiences, theme) => {
   return {
     fontWeight:
-      personName.indexOf(name) === -1
+      selectedExperiences.indexOf(experience) === -1
         ? theme.typography.fontWeightRegular
         : theme.typography.fontWeightMedium,
   };
@@ -75,9 +57,11 @@ const TeacherForm = () => {
   const [values, setValues] = useState({
     showPassword: false,
   });
-  const [personName, setPersonName] = useState([]);
+  const [selectedExperiences, setSelectedExperiences] = useState([]);
   const [isLoading, setIsloading] = useState(false);
-  const [department, setDepartment] = useState("");
+  const [error, setError] = useState("");
+  const [showError, setShowError] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState("");
   const usernameInputRef = useRef();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
@@ -93,31 +77,66 @@ const TeacherForm = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const handlerDepartment = (event) => {
-    setDepartment(event.target.value);
+  const handleDepartment = (event) => {
+    setSelectedDepartment(event.target.value);
   };
   const chipHandler = (event) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
+    setSelectedExperiences(
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
   };
-  const signupHandler = async () => {
+  const closeHandler = () => {
+    console.log("Clicked");
+    // setShowError(false)
+  };
+  const signupHandler = (event) => {
     const enteredUsername = usernameInputRef.current.value;
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
-   
+    setIsloading(true);
+    TeacherSignup(
+      enteredUsername,
+      enteredEmail,
+      enteredPassword,
+      selectedExperiences,
+      selectedDepartment
+    )
+      .then((res) => {
+        const { message } = res.data;
+        console.log(message);
+        if (message == "Created user!") {
+          router.replace("/pages/login");
+          setIsloading(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err.response.data.message);
+        if (err.response.data.message) {
+          setError(err.response.data.message);
+          setShowError(true);
+        } else setError(err.message);
+        setIsloading(false);
+        return;
+      });
+    event.preventDefault();
   };
-  console.log(personName);
+  if (showError) {
+    setTimeout(() => {
+      setShowError(false);
+    }, 5000);
+  }
+
   return (
     <ProjectCard>
       {isLoading ? (
         <LoadingSpinner />
       ) : (
-        <Box className="content-center">
+        <Box className="content-center" onClick={closeHandler}>
+          {showError ? <Error error={error} /> : null}
           <Card sx={{ zIndex: 1 }}>
             <CardContent
               sx={{
@@ -138,7 +157,7 @@ const TeacherForm = () => {
                 <Typography
                   variant="h7"
                   sx={{
-                    ml: 3,
+                    ml: 1,
                     lineHeight: 1,
                     fontWeight: 600,
                     textTransform: "uppercase",
@@ -176,62 +195,6 @@ const TeacherForm = () => {
                   sx={{ marginBottom: 4 }}
                   inputRef={emailInputRef}
                 />
-                <Box sx={{ minWidth: 120, mb: 4 }}>
-                  <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">
-                      Your Department
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      value={department}
-                      label="Your Department"
-                      onChange={handlerDepartment}
-                    >
-                      <MenuItem value={10}>Ten</MenuItem>
-                      <MenuItem value={20}>Twenty</MenuItem>
-                      <MenuItem value={30}>Thirty</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
-
-                <FormControl sx={{ mb: 4 }} fullWidth>
-                  <InputLabel id="demo-multiple-chip-label">
-                    Your experiences
-                  </InputLabel>
-                  <Select
-                    labelId="demo-multiple-chip-label"
-                    id="demo-multiple-chip"
-                    multiple
-                    value={personName}
-                    onChange={chipHandler}
-                    input={
-                      <OutlinedInput
-                        id="select-multiple-chip"
-                        label="Your experiences"
-                      />
-                    }
-                    renderValue={(selected) => (
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                        {selected.map((value) => (
-                          <Chip key={value} label={value} />
-                        ))}
-                      </Box>
-                    )}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
-                        style={getStyles(name, personName, theme)}
-                      >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
                 <FormControl fullWidth>
                   <InputLabel htmlFor="auth-register-password">
                     Password
@@ -259,6 +222,67 @@ const TeacherForm = () => {
                     }
                   />
                 </FormControl>
+                <Box sx={{ minWidth: 120, mt: 4 }}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">
+                      Your Department
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={selectedDepartment}
+                      label="Your Department"
+                      onChange={handleDepartment}
+                    >
+                      {departments.map((department) => (
+                        <MenuItem key={department} value={department}>
+                          {department}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+
+                <FormControl sx={{ mt: 4 }} fullWidth>
+                  <InputLabel id="demo-multiple-chip-label">
+                    Your experiences
+                  </InputLabel>
+                  <Select
+                    labelId="demo-multiple-chip-label"
+                    id="demo-multiple-chip"
+                    multiple
+                    value={selectedExperiences}
+                    onChange={chipHandler}
+                    input={
+                      <OutlinedInput
+                        id="select-multiple-chip"
+                        label="Your experiences"
+                      />
+                    }
+                    renderValue={(selected) => (
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip key={value} label={value} />
+                        ))}
+                      </Box>
+                    )}
+                    MenuProps={MenuProps}
+                  >
+                    {experiences.map((experience) => (
+                      <MenuItem
+                        key={experience}
+                        value={experience}
+                        style={getStyles(
+                          experience,
+                          selectedExperiences,
+                          theme
+                        )}
+                      >
+                        {experience}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
 
                 <Button
                   fullWidth
@@ -283,6 +307,24 @@ const TeacherForm = () => {
                   <Typography variant="body2">
                     <Link passHref href="/pages/login">
                       <LinkStyled>Sign in instead</LinkStyled>
+                    </Link>
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                    mt: 1,
+                  }}
+                >
+                  <Typography variant="body2" sx={{ marginRight: 2 }}>
+                    Are you a student?
+                  </Typography>
+                  <Typography variant="body2">
+                    <Link passHref href="/pages/signup/student">
+                      <LinkStyled>Sign up here as a student</LinkStyled>
                     </Link>
                   </Typography>
                 </Box>
