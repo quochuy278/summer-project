@@ -18,6 +18,7 @@ import MainNavigation from "../navigation/main-navigation";
 import UserDropdownMenuItem from "../navigation/user-dropdown-menu";
 import LoadingSpinner from "../ui/loading-spinner";
 
+
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
 
