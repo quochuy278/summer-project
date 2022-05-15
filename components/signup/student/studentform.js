@@ -13,19 +13,21 @@ import IconButton from "@mui/material/IconButton";
 import CardContent from "@mui/material/CardContent";
 import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import { styled, useTheme } from "@mui/material/styles";
-import MuiCard from "@mui/material/Card";
 import InputAdornment from "@mui/material/InputAdornment";
 // ** Icons Imports
 import EyeOutline from "mdi-material-ui/EyeOutline";
 import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
 // ** Packages
 import { StudentSignUp } from "../../../lib/auth";
-import LoadingSpinner from "../../../components/ui/loading-spinner";
-import ProjectCard from "../../../components/layout/Card";
-import Icon from "../../../components/icon";
-import Error from "../../ui/error";
-import { Card, LinkStyled } from "../../ui/customComponents";
+import Icon from "../../../constants/icon";
+import {
+  ProjectCard,
+  Error,
+  LoadingSpinner,
+  Card,
+  LinkStyled,
+} from "../../../components";
+
 // ** Styled Components
 
 const StudentForm = () => {
@@ -34,7 +36,7 @@ const StudentForm = () => {
     showPassword: false,
   });
   const [isLoading, setIsloading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [showError, setShowError] = useState(false);
   const usernameInputRef = useRef();
   const emailInputRef = useRef();
@@ -50,36 +52,34 @@ const StudentForm = () => {
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
-  const signupHandler =  (event) => {
+  const signupHandler = (event) => {
     const enteredUsername = usernameInputRef.current.value;
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
     setIsloading(true);
     StudentSignUp(enteredUsername, enteredEmail, enteredPassword)
-    .then((res) => {
-      // setIsloading(true);
-      const {message} = res.data
-      if (message == "Created user!") {
-        router.replace("/pages/login");
-      }
-      setIsloading(false)
-    })
-    .catch((err) => {
-      console.log(err.response.data.message);
-      if (err.response.data.message) {
-        setError(err.response.data.message)
-        setShowError(true)
-      }
-      else setError(err.message)
-      setIsloading(false);
-      return
-    });
-    event.preventDefault()
+      .then((res) => {
+        // setIsloading(true);
+        const { message } = res.data;
+        if (message == "Created user!") {
+          router.replace("/pages/login");
+        }
+        setIsloading(false);
+      })
+      .catch((err) => {
+        if (err.response.data.message) {
+          setError(err.response.data.message);
+          setShowError(true);
+        } else setError(err.message);
+        setIsloading(false);
+        return;
+      });
+    event.preventDefault();
   };
   if (showError) {
     setTimeout(() => {
-      setShowError(false)
-    }, 5000)
+      setShowError(false);
+    }, 5000);
   }
   return (
     <ProjectCard>
@@ -87,7 +87,7 @@ const StudentForm = () => {
         <LoadingSpinner />
       ) : (
         <Box className="content-center">
-            {showError ? (<Error error={error}/>) : (null)}
+          {showError ? <Error error={error} /> : null}
           <Card sx={{ zIndex: 1 }}>
             <CardContent
               sx={{
@@ -102,9 +102,9 @@ const StudentForm = () => {
                   justifyContent: "center",
                 }}
               >
-               <svg width={45} height={50}>
-                 <Icon/>
-               </svg>
+                <svg width={45} height={50}>
+                  <Icon />
+                </svg>
                 <Typography
                   variant="h7"
                   sx={{
@@ -113,7 +113,7 @@ const StudentForm = () => {
                     fontWeight: 600,
                     textTransform: "uppercase",
                     fontSize: "1.5rem !important",
-                    marginBottom: '20px'
+                    marginBottom: "20px",
                   }}
                 >
                   My Summer Project
@@ -130,11 +130,7 @@ const StudentForm = () => {
                   Make your work management easy and fun!
                 </Typography>
               </Box>
-              <form
-                noValidate
-                autoComplete="off"
-                onSubmit={signupHandler}
-              >
+              <form noValidate autoComplete="off" onSubmit={signupHandler}>
                 <TextField
                   autoFocus
                   fullWidth
@@ -187,7 +183,7 @@ const StudentForm = () => {
                 >
                   Sign up
                 </Button>
-              
+
                 <Box
                   sx={{
                     display: "flex",

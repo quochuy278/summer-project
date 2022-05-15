@@ -13,19 +13,18 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useTheme } from "@mui/material/styles";
-import { signOut, useSession } from "next-auth/react";
-import MainNavigation from "../navigation/main-navigation";
-import UserDropdownMenuItem from "../navigation/user-dropdown-menu";
-import LoadingSpinner from "../ui/loading-spinner";
+import { getSession, signOut, useSession } from "next-auth/react";
+import {MainNavigation,UserDropdownMenuItem,LoadingSpinner} from '../../components'
+import getUser from '../../lib/helper'
 
-
-const Header = () => {
+const Header = (props) => {
+  const [anchorElNav, setAnchorElNav] = useState(null)
   const [anchorElUser, setAnchorElUser] = useState(null);
-
-  const { status } = useSession();
+  const { data: session,status } = useSession();
   const theme = useTheme();
-
-  console.log(status);
+  
+  console.log(session)
+  console.log(props.data)
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -200,3 +199,4 @@ const Header = () => {
   );
 };
 export default Header;
+

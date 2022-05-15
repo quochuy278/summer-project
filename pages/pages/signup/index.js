@@ -20,7 +20,7 @@ const CustomMuiBox = styled(Box)((theme) => ({
 const handler = () => {
   const router = useRouter();
   const query = router.query;
-  console.log(query);
+
   return (
     <ProjectCard>
       <CustomMuiBox>

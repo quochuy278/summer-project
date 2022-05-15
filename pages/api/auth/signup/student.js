@@ -31,9 +31,9 @@ const handler = async (req, res) => {
 
   const db = client.db();
 
-  const existingUser = await db.collection("students").findOne({ email: email });
-
-  if (existingUser) {
+  const existingStudent = await db.collection("students").findOne({ email: email });
+  const existingTeacher = await db.collection("teachers").findOne({ email: email });
+  if (existingStudent || existingStudent && existingTeacher || existingTeacher) {
     client.close();
     return res.status(404).json({ message: "User exists already!" });
   }

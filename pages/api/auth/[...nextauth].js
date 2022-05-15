@@ -23,7 +23,7 @@ export default NextAuth({
           email: credentials.email,
         });
 
-        console.log(teacher);
+       
         if (!credentials.email) {
           throw new Error("Please filled in your email");
         } else if (!credentials.password) {
