@@ -20,12 +20,12 @@ import InputAdornment from "@mui/material/InputAdornment";
 
 import { signIn } from "next-auth/react";
 // ** Icons Imports
-import Icon from "../../components/icon";
+import Icon from "../../constants/icon";
 import EyeOutline from "mdi-material-ui/EyeOutline";
 import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import Error from "../ui/error";
-import {Card,LinkStyled,FormControlLabel} from '../../components/ui/customComponents'
+import {Card,LinkStyled,FormControlLabel} from '../../components'
 
 
 const LoginForm = () => {

@@ -15,17 +15,22 @@ import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import { useTheme } from "@mui/material/styles";
 import InputAdornment from "@mui/material/InputAdornment";
+import { Chip, MenuItem, Select } from "@mui/material";
 // ** Icons Imports
 import EyeOutline from "mdi-material-ui/EyeOutline";
 import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
 // ** Packages
 import { TeacherSignup } from "../../../lib/auth";
-import LoadingSpinner from "../../../components/ui/loading-spinner";
-import ProjectCard from "../../../components/layout/Card";
-import Icon from "../../../components/icon";
-import { Chip, MenuItem, Select } from "@mui/material";
-import Error from "../../ui/error";
-import { Card, LinkStyled, MenuProps } from "../../ui/customComponents";
+
+import Icon from "../../../constants/icon";
+import {
+  Card,
+  LinkStyled,
+  MenuProps,
+  LoadingSpinner,
+  ProjectCard,
+  Error,
+} from "../../../components";
 const experiences = [
   "Math",
   "Chemistry",
