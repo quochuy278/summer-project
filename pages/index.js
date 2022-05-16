@@ -3,6 +3,7 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
 export default function Home() {
+  console.log(process.env.NEXTAUTH_URL)
   return (
     <div className={styles.container}>
       <main className={styles.main}>

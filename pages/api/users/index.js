@@ -1,14 +1,14 @@
 
 import { connectToDatabase } from "../../../lib/db";
-import { getSession } from "next-auth/react";
+
 
 const handler = async (req, res) => {
-  if (req.method !== "GET") {
+  if (req.method !== "POST") {
     return;
   }
   console.log(req.body)
   const userEmail = req.body.userEmail
-//   if (!session) return res.status(200).json({messsage: 'Please login to see this' });
+  console.log(userEmail)
 
   const client = await connectToDatabase();
 

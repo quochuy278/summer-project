@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -16,15 +16,17 @@ import { useTheme } from "@mui/material/styles";
 import { getSession, signOut, useSession } from "next-auth/react";
 import {MainNavigation,UserDropdownMenuItem,LoadingSpinner} from '../../components'
 import getUser from '../../lib/helper'
+import { Divider } from "@mui/material";
+import AuthContext from "../../store/auth-context";
 
 const Header = (props) => {
   const [anchorElNav, setAnchorElNav] = useState(null)
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const { data: session,status } = useSession();
+  const { status } = useSession();
   const theme = useTheme();
-  
-  console.log(session)
-  console.log(props.data)
+
+    console.log(status)
+
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -47,6 +49,7 @@ const Header = (props) => {
   if (status == "loading") {
     return <LoadingSpinner />;
   }
+ 
   return (
     <AppBar position="static">
       <Container maxWidth="x1">
@@ -169,6 +172,8 @@ const Header = (props) => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
+                  
+                 
                   {userDropdownItems.map((item) => (
                     <MenuItem key={item.index} onClick={handleCloseUserMenu}>
                       <Link href={item.path}>
@@ -200,3 +205,17 @@ const Header = (props) => {
 };
 export default Header;
 
+export const getServerSideProps = async (context) => {
+  const session = await getSession({ req: context.req });
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/pages/login",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: { session },
+  };
+};
