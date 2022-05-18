@@ -42,11 +42,11 @@ const UserProfile = (props) => {
 
   const authCtx = useContext(AuthContext);
   const userEmail = session.user.email;
-  console.log(authCtx);
+
   useEffect(() => {
     getUser(userEmail)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         authCtx.storeUserInfo(res.data);
       })
       .catch((err) => {

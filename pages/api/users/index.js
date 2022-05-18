@@ -14,7 +14,7 @@ const handler = async (req, res) => {
 
   const db = client.db();
 
-  const user = await db.collection("students").findOne({email: userEmail})
+  const user = await db.collection("users").findOne({email: userEmail})
 
   res.status(200).json({ data: user });
 };

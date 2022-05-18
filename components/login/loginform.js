@@ -17,15 +17,15 @@ import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 // ** Icons Imports
 import Icon from "../../constants/icon";
 import EyeOutline from "mdi-material-ui/EyeOutline";
 import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
 import LoadingSpinner from "../../components/ui/loading-spinner";
 import Error from "../ui/error";
-import {Card,LinkStyled,FormControlLabel} from '../../components'
-
+import { Card, LinkStyled, FormControlLabel } from "../../components";
+import Image from "next/image";
 
 const LoginForm = () => {
   // ** State
@@ -34,6 +34,7 @@ const LoginForm = () => {
   });
   // ** Hook
   const router = useRouter();
+  const {status} = useSession()
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const [isLoading, setIsloading] = useState(false);
@@ -54,22 +55,12 @@ const LoginForm = () => {
       setIsloading(true)
     )
       .then((res) => {
-        const message = res.error;
-        console.log(res);
-        if (message === null) {
-          console.log("Login Successfully");
-          router.replace("/");
-          setIsloading(false);
-        } else if (message) {
-          setShowError(true);
-          setError(message);
-        }
-        console.log(message);
+        console.log(res.data);
       })
       .catch((err) => {
         console.log(err);
       });
-
+ 
     setIsloading(false);
   };
 
@@ -84,7 +75,10 @@ const LoginForm = () => {
     setTimeout(() => {
       setShowError(false);
     }, 5000);
+  } else if ( status === 'authenticated') {
+      router.replace("/");
   }
+ 
   return (
     <ProjectCard>
       {isLoading ? (
@@ -100,20 +94,17 @@ const LoginForm = () => {
             >
               <Box
                 sx={{
-                  mb: 8,
+                  mb: 3,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <svg width={45} height={50}>
-                  <Icon />
-                </svg>
+                <Image src="/icons/education.svg" alt="Logo" width={45} height={50} />
                 <Typography
                   variant="h6"
                   sx={{
-                    mb: 3,
-                    ml: 1,
+                    ml: 2,
                     lineHeight: 1,
                     fontWeight: 600,
                     textTransform: "uppercase",

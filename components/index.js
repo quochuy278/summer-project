@@ -1,6 +1,6 @@
 import CustomButton from "./ui/button";
 import LoginForm from "./login/loginform";
-import StudentForm from "./signup/student/studentform";
+import SignUpForm from "./signup/signupform";
 import TeacherForm from "./signup/teacher/teacherform";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
@@ -24,7 +24,7 @@ export {
   CustomButton,
   LoginForm,
   ScrollToTopButton,
-  StudentForm,
+  SignUpForm,
   TeacherForm,
   Header,
   Footer,
