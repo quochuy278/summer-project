@@ -18,19 +18,19 @@ import InputAdornment from "@mui/material/InputAdornment";
 import EyeOutline from "mdi-material-ui/EyeOutline";
 import EyeOffOutline from "mdi-material-ui/EyeOffOutline";
 // ** Packages
-import { StudentSignUp } from "../../../lib/auth";
-import Icon from "../../../constants/icon";
+import { SignUp } from "../../lib/auth";
 import {
   ProjectCard,
   Error,
   LoadingSpinner,
   Card,
   LinkStyled,
-} from "../../../components";
+} from "..";
+import Image from "next/image";
 
 // ** Styled Components
 
-const StudentForm = () => {
+const SignUpForm = () => {
   // ** States
   const [values, setValues] = useState({
     showPassword: false,
@@ -57,22 +57,25 @@ const StudentForm = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
     setIsloading(true);
-    StudentSignUp(enteredUsername, enteredEmail, enteredPassword)
+    SignUp(enteredUsername, enteredEmail, enteredPassword)
       .then((res) => {
         // setIsloading(true);
-        const { message } = res.data;
+        // const { message } = res.data;
         if (message == "Created user!") {
-          router.replace("/pages/login");
+          // router.replace("/pages/login");
+          console.log('Success')
         }
         setIsloading(false);
+        console.log(res.data)
       })
       .catch((err) => {
-        if (err.response.data.message) {
-          setError(err.response.data.message);
-          setShowError(true);
-        } else setError(err.message);
-        setIsloading(false);
-        return;
+        // if (err.response.data.message) {
+        //   setError(err.response.data.message);
+        //   setShowError(true);
+        // } else setError(err.message);
+        // setIsloading(false);
+        // return;
+        console.log(err)
       });
     event.preventDefault();
   };
@@ -102,18 +105,15 @@ const StudentForm = () => {
                   justifyContent: "center",
                 }}
               >
-                <svg width={45} height={50}>
-                  <Icon />
-                </svg>
+                <Image src="/icons/education.svg" alt="Logo" width={45} height={50} />
                 <Typography
                   variant="h7"
                   sx={{
-                    ml: 1,
+                    ml: 2,
                     lineHeight: 1,
                     fontWeight: 600,
                     textTransform: "uppercase",
                     fontSize: "1.5rem !important",
-                    marginBottom: "20px",
                   }}
                 >
                   My Summer Project
@@ -210,4 +210,4 @@ const StudentForm = () => {
   );
 };
 
-export default StudentForm;
+export default SignUpForm;

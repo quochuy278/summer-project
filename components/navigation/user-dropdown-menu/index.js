@@ -2,15 +2,15 @@ const UserDropdownMenuItem = () => {
   return [
     {
       title: "Profile",
-      path: "/users/profile",
+      path: "/pages/users/profile",
     },
     {
       title: "Account",
-      path: "/users/account",
+      path: "/pages/users/account",
     },
     {
       title: "Dashboard",
-      path: "/users/dashboard",
+      path: "/pages/users/dashboard",
     },
   ];
 };

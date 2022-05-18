@@ -16,7 +16,8 @@ module.exports = (phase) => {
         mongodb_password: "huy123",
         mongodb_cluster: "cluster0",
         mongodb_database: "Summer_Project",
-        url: "http://localhost:3000/",
+        NEXTAUTH_URL: "http://localhost:3000/",
+        SECRET: 'secret'
       },
     };
   }
@@ -26,7 +27,8 @@ module.exports = (phase) => {
       mongodb_password: "huy123",
       mongodb_cluster: "cluster0",
       mongodb_database: "Summer_Project",
-      url: "#",
+      NEXTAUTH_URL: "#",
+      SECRET: 'secret'
     },
   };
 };
